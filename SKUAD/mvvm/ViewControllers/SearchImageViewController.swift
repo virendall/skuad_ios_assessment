@@ -50,15 +50,14 @@ class SearchImageViewController: UIViewController {
             self?.tableview.reloadData()
         }.disposed(by: disposeBag)
         
-        self.viewModel.isLoading.bind(listener: {[weak self] (isLoading) in
+        self.viewModel.loading.bind(listener: {[weak self] (isLoading) in
             self?.activityIndicatorView.isHidden = !isLoading
         }).disposed(by: disposeBag)
         
-        self.viewModel.error.bind { [weak self](error) in
+        self.viewModel.error.bind {[weak self] (error) in
             guard let _error = error else {
                 return;
             }
-            print(_error)
             self?.showAlert(msg: _error)
         }.disposed(by: disposeBag)
     }
@@ -71,7 +70,7 @@ class SearchImageViewController: UIViewController {
 extension SearchImageViewController {
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         guard (scrollView.contentOffset.y + scrollView.frame.size.height) >= scrollView.contentSize.height,
-            !viewModel.isLoading.value else {
+              !viewModel.isLoading(), viewModel.totalImages() > 0 else {
                 return
         }
         viewModel.searchImagesBy(name: searchController.searchBar.text, loadNextPage: true)
@@ -80,7 +79,9 @@ extension SearchImageViewController {
 
 extension SearchImageViewController: UISearchBarDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = nil
         self.view.endEditing(true)
+        self.viewModel.clearResult()
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -95,11 +96,10 @@ extension SearchImageViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: KCellReuseIdentifier) as! ImageTableViewCell
-        let item = self.viewModel.imageFor(index: indexPath.row)
-        if let url = URL(string: item.webformatURL)  {
+        if let url = self.viewModel.imageURlFor(index: indexPath.row)  {
             cell.searchImage.kf.setImage(with: url)
         }
-        cell.searchImageHeight.constant = self.viewModel.imageViewHeightFor(hit: item, width: tableView.frame.width)
+        cell.searchImageHeight.constant = self.viewModel.imageViewHeightFor(index: indexPath.row, width: tableView.frame.width)
         return cell;
     }
 }

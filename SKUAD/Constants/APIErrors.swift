@@ -22,7 +22,7 @@ extension APIErrors {
         case .noImageFound:
             return "No result found"
         case .noMoreImagesFound:
-            return "No more images found"
+            return "No more images for the search"
         }
         
     }

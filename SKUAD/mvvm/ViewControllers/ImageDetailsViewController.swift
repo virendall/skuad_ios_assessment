@@ -42,8 +42,7 @@ extension ImageDetailsViewController: UICollectionViewDelegateFlowLayout, UIColl
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell  = collectionView.dequeueReusableCell(withReuseIdentifier: KCellReuseIdentifier, for: indexPath) as! ImageCollectionViewCell
-        let item = viewModel.imageFor(index: indexPath.row)
-        if let url = URL(string: item.webformatURL)  {
+        if let url = self.viewModel.imageURlFor(index: indexPath.row)  {
             cell.searchImage.kf.setImage(with: url)
         }
         return cell

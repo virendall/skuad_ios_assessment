@@ -17,7 +17,7 @@ class SearchImagesViewModel: NSObject {
     
     var imageResult: Box<SearchImageModel> = Box(SearchImageModel())
     var error: Box<String?> = Box(nil)
-    var isLoading: Box<Bool> = Box(false)
+    var loading: Box<Bool> = Box(false)
     var haveMoreImages: Bool = true
     var page = 1
     
@@ -39,7 +39,7 @@ class SearchImagesViewModel: NSObject {
             return
         }
         
-        isLoading.value = true
+        loading.value = true
         dataRequest = self.api.responseData(endPoint: endPoint, params: ["q" : _name, "page" : page], response: SearchImageModel.self) { [weak self](response) in
             guard let `self` = self else {
                 return
@@ -59,7 +59,7 @@ class SearchImagesViewModel: NSObject {
             case .failure(let error):
                 self.error.value = error.localizedDescription
             }
-            self.isLoading.value = false
+            self.loading.value = false
         }
     }
     
@@ -68,11 +68,23 @@ class SearchImagesViewModel: NSObject {
         return self.imageResult.value.hits.count
     }
     
-    func imageFor(index: Int) -> Hit {
-        return self.imageResult.value.hits[index]
+    func imageURlFor(index: Int) -> URL? {
+        if let url = URL(string: self.imageResult.value.hits[index].webformatURL)  {
+            return url
+        }
+        return nil
     }
     
-    func imageViewHeightFor(hit: Hit, width: CGFloat) -> CGFloat {
+    func imageViewHeightFor(index: Int, width: CGFloat) -> CGFloat {
+        let hit = self.imageResult.value.hits[index]
         return (hit.webformatHeightCgFloat / hit.webformatWidthCgFloat) * width
+    }
+    
+    func isLoading() -> Bool {
+        return self.loading.value
+    }
+    
+    func clearResult() {
+        self.imageResult.value = SearchImageModel()
     }
 }
