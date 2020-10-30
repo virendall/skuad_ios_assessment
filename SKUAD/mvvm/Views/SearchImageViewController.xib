@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SearchImageViewController" customModule="SKUAD" customModuleProvider="target">
+            <connections>
+                <outlet property="activityIndicatorView" destination="RWx-Kc-x1y" id="EXy-NO-o3I"/>
+                <outlet property="tableview" destination="n28-74-wN4" id="Oi6-Mf-Idc"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="n28-74-wN4">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="xS0-V8-6sa"/>
+                        <outlet property="delegate" destination="-1" id="t0N-l1-Si5"/>
+                    </connections>
+                </tableView>
+                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="RWx-Kc-x1y">
+                    <rect key="frame" x="169" y="315" width="37" height="37"/>
+                    <color key="color" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                </activityIndicatorView>
+            </subviews>
+            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+            <constraints>
+                <constraint firstItem="RWx-Kc-x1y" firstAttribute="centerY" secondItem="fnl-2z-Ty3" secondAttribute="centerY" id="Ifw-jq-gx4"/>
+                <constraint firstItem="n28-74-wN4" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="Rcv-7f-JLG"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="n28-74-wN4" secondAttribute="bottom" id="W6G-hD-vDt"/>
+                <constraint firstItem="n28-74-wN4" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="fG2-rW-hKN"/>
+                <constraint firstItem="RWx-Kc-x1y" firstAttribute="centerX" secondItem="fnl-2z-Ty3" secondAttribute="centerX" id="g3T-uf-qOK"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="n28-74-wN4" secondAttribute="trailing" id="iBf-wp-Zvf"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <point key="canvasLocation" x="139" y="123"/>
+        </view>
+    </objects>
+</document>
