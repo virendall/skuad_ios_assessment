@@ -12,7 +12,7 @@ import Kingfisher
 class ImageDetailsViewController: UIViewController {
     
     private let KCellReuseIdentifier = "ImageCollectionViewCell"
-
+    
     var viewModel: SearchImagesViewModel!
     var selectedImage: Int = 0
     
@@ -23,7 +23,7 @@ class ImageDetailsViewController: UIViewController {
             self.collectionView.register(UINib(nibName: KCellReuseIdentifier, bundle: nil), forCellWithReuseIdentifier: KCellReuseIdentifier)
         }
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -42,9 +42,8 @@ extension ImageDetailsViewController: UICollectionViewDelegateFlowLayout, UIColl
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell  = collectionView.dequeueReusableCell(withReuseIdentifier: KCellReuseIdentifier, for: indexPath) as! ImageCollectionViewCell
-        if let url = self.viewModel.imageURlFor(index: indexPath.row)  {
-            cell.searchImage.kf.setImage(with: url)
-        }
+        let url = self.viewModel.imageURlFor(index: indexPath.row)
+        cell.searchImage.kf.setImage(with: url)
         return cell
     }
     

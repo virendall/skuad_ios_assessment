@@ -21,7 +21,7 @@ class SearchImageViewController: UIViewController {
         return SearchImagesViewModel(api: client, endPoint: SearchEndPoint.searchImage)
     }()
     
-    private lazy var client = {
+    private lazy var client: Requestable = {
         return ServiceAPI()
     }()
     
@@ -71,7 +71,7 @@ extension SearchImageViewController {
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         guard (scrollView.contentOffset.y + scrollView.frame.size.height) >= scrollView.contentSize.height,
               !viewModel.isLoading(), viewModel.totalImages() > 0 else {
-                return
+            return
         }
         viewModel.searchImagesBy(name: searchController.searchBar.text, loadNextPage: true)
     }
@@ -79,7 +79,6 @@ extension SearchImageViewController {
 
 extension SearchImageViewController: UISearchBarDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.text = nil
         self.view.endEditing(true)
         self.viewModel.clearResult()
     }
@@ -96,9 +95,8 @@ extension SearchImageViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: KCellReuseIdentifier) as! ImageTableViewCell
-        if let url = self.viewModel.imageURlFor(index: indexPath.row)  {
-            cell.searchImage.kf.setImage(with: url)
-        }
+        let url = self.viewModel.imageURlFor(index: indexPath.row)
+        cell.searchImage.kf.setImage(with: url)
         cell.searchImageHeight.constant = self.viewModel.imageViewHeightFor(index: indexPath.row, width: tableView.frame.width)
         return cell;
     }

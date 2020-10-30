@@ -26,6 +26,40 @@ class SearchImagesViewModel: NSObject {
         self.endPoint = endPoint
     }
     
+    func cancelDataRequest() {
+        self.dataRequest?.cancel()
+    }
+    
+    func isLoading() -> Bool {
+        return self.loading.value
+    }
+    
+    func clearResult() {
+        self.imageResult.value = SearchImageModel()
+    }
+}
+
+extension SearchImagesViewModel {
+    
+    func totalImages() -> Int {
+        return self.imageResult.value.hits.count
+    }
+    
+    func imageURlFor(index: Int) -> URL? {
+        if let url = URL(string: self.imageResult.value.hits[index].webformatURL)  {
+            return url
+        }
+        return nil
+    }
+    
+    func imageViewHeightFor(index: Int, width: CGFloat) -> CGFloat {
+        let hit = self.imageResult.value.hits[index]
+        return (hit.webformatHeightCgFloat / hit.webformatWidthCgFloat) * width
+    }
+    
+}
+
+extension SearchImagesViewModel {
     func searchImagesBy(name: String?, loadNextPage: Bool = false) {
         guard let _name = name else {
             self.error.value = APIErrors.emptySearch.localizedDescription
@@ -61,30 +95,5 @@ class SearchImagesViewModel: NSObject {
             }
             self.loading.value = false
         }
-    }
-    
-    
-    func totalImages() -> Int {
-        return self.imageResult.value.hits.count
-    }
-    
-    func imageURlFor(index: Int) -> URL? {
-        if let url = URL(string: self.imageResult.value.hits[index].webformatURL)  {
-            return url
-        }
-        return nil
-    }
-    
-    func imageViewHeightFor(index: Int, width: CGFloat) -> CGFloat {
-        let hit = self.imageResult.value.hits[index]
-        return (hit.webformatHeightCgFloat / hit.webformatWidthCgFloat) * width
-    }
-    
-    func isLoading() -> Bool {
-        return self.loading.value
-    }
-    
-    func clearResult() {
-        self.imageResult.value = SearchImageModel()
     }
 }
