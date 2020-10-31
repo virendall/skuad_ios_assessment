@@ -13,5 +13,5 @@ public typealias Parameters = [String : Any]
 
 protocol Requestable {
     @discardableResult
-    func responseData<T>(endPoint: EndPointType, params: Parameters?, response: T.Type, completion: @escaping (DataResponse<T, AFError>) -> Void) -> DataRequest where T : Decodable
+    func responseData<T>(endPoint: EndPointType, params: Parameters?, response: T.Type, completion: @escaping (Result<T, Error>) -> Void) -> DataRequest? where T : Decodable
 }

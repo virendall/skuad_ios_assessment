@@ -13,13 +13,18 @@ class SearchImagesViewModel: NSObject {
     
     private let api: Requestable
     private let endPoint: EndPointType
-    private var dataRequest: DataRequest?
+    private let KMaxNumberOfSuggestion = 10
     
+    private var page = 1
+    private var dataRequest: DataRequest?
+    private var haveMoreImages: Bool = true
+
     var imageResult: Box<SearchImageModel> = Box(SearchImageModel())
     var error: Box<String?> = Box(nil)
     var loading: Box<Bool> = Box(false)
-    var haveMoreImages: Bool = true
-    var page = 1
+    var searchHistory: Box<[String]> = Box([])
+
+    
     
     init(api: Requestable, endPoint: EndPointType) {
         self.api = api
@@ -60,12 +65,23 @@ extension SearchImagesViewModel {
 }
 
 extension SearchImagesViewModel {
+    
+    func totalSearchQuery() -> Int {
+        return self.searchHistory.value.count > KMaxNumberOfSuggestion ? KMaxNumberOfSuggestion : self.searchHistory.value.count
+    }
+    
+    func queryFor(index: Int) -> String {
+        return self.searchHistory.value[index]
+    }
+}
+
+extension SearchImagesViewModel {
     func searchImagesBy(name: String?, loadNextPage: Bool = false) {
         guard let _name = name else {
             self.error.value = APIErrors.emptySearch.localizedDescription
             return
         }
-        
+
         page = loadNextPage ? page + 1 : 1
         
         if !haveMoreImages && page != 1 {
@@ -78,22 +94,34 @@ extension SearchImagesViewModel {
             guard let `self` = self else {
                 return
             }
-            switch response.result {
+            switch response {
             case .success(let model):
-                if(self.page == 1) {
-                    self.imageResult.value = model
-                } else {
-                    self.imageResult.value.hits.append(contentsOf: model.hits)
-                }
-                
-                if (self.totalImages() == 0) {
-                    self.error.value = APIErrors.noImageFound.localizedDescription
-                }
-                self.haveMoreImages = self.totalImages() < model.totalHits
+                self.updateResult(model, _name)
             case .failure(let error):
                 self.error.value = error.localizedDescription
             }
             self.loading.value = false
         }
+    }
+    
+    func addSearchQuery(_ query: String) {
+        if(!searchHistory.value.contains(query)) {
+            searchHistory.value.append(query)
+            searchHistory.notifyListeners()
+        }
+    }
+    
+    func updateResult(_ model: SearchImageModel, _ query: String) {
+        if(self.page == 1) {
+            self.imageResult.value = model
+        } else {
+            self.imageResult.value.hits.append(contentsOf: model.hits)
+        }
+        if (self.totalImages() == 0) {
+            self.error.value = APIErrors.noImageFound.localizedDescription
+        } else {
+            self.addSearchQuery(query)
+        }
+        self.haveMoreImages = self.totalImages() < model.totalHits
     }
 }

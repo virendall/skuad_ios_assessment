@@ -25,7 +25,13 @@ class SearchImageViewController: UIViewController {
         return ServiceAPI()
     }()
     
-    private lazy var searchController: UISearchController = { UISearchController(searchResultsController: nil) }()
+    private lazy var searchHistory: SearchHistoryViewController = {
+        let vc = SearchHistoryViewController.loadNib()
+        vc.viewModel = viewModel
+        vc.historyTableViewDelegate = self
+        return vc;
+    }()
+    private lazy var searchController: UISearchController = { UISearchController(searchResultsController: searchHistory) }()
     
     private let KCellReuseIdentifier = "ImageTableViewCell"
     
@@ -42,9 +48,9 @@ class SearchImageViewController: UIViewController {
         super.viewDidLoad()
         searchController.searchBar.placeholder = "Search Images"
         searchController.searchBar.delegate = self
-        searchController.dimsBackgroundDuringPresentation = false
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
         navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = false
         definesPresentationContext = true
         self.viewModel.imageResult.bind {[weak self] (_) in
             self?.tableview.reloadData()
@@ -77,6 +83,17 @@ extension SearchImageViewController {
     }
 }
 
+extension SearchImageViewController: UISearchResultsUpdating {
+  func updateSearchResults(for searchController: UISearchController) {
+    // 1
+    if searchController.searchBar.searchTextField.isFirstResponder {
+      searchController.showsSearchResultsController = true
+    } else {
+      searchController.searchBar.searchTextField.backgroundColor = nil
+    }
+  }
+}
+
 extension SearchImageViewController: UISearchBarDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         self.view.endEditing(true)
@@ -84,6 +101,8 @@ extension SearchImageViewController: UISearchBarDelegate {
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+        searchController.showsSearchResultsController = false
         viewModel.searchImagesBy(name: searchBar.text)
     }
 }
@@ -105,5 +124,12 @@ extension SearchImageViewController: UITableViewDataSource {
 extension SearchImageViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.coordinator.fullImage(viewModel: self.viewModel, index: indexPath.row)
+    }
+}
+
+extension SearchImageViewController: HistoryTableViewDelegate {
+    func didSelect(query: String) {
+        searchController.searchBar.text = query
+        searchBarSearchButtonClicked(searchController.searchBar)
     }
 }

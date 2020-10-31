@@ -17,7 +17,7 @@ class ServiceAPI: Requestable {
     }()
     
     @discardableResult
-    func responseData<T>(endPoint: EndPointType, params: Parameters?, response: T.Type, completion: @escaping (DataResponse<T, AFError>) -> Void) -> DataRequest where T : Decodable {
+    func responseData<T>(endPoint: EndPointType, params: Parameters?, response: T.Type, completion: @escaping (Result<T, Error>) -> Void) -> DataRequest? where T : Decodable {
         print(endPoint.url)
         print(params ?? [:])
         print(endPoint.headers)
@@ -28,7 +28,14 @@ class ServiceAPI: Requestable {
             encoding: URLEncoding.default,
             headers: HTTPHeaders(endPoint.headers)
         )
-        .responseDecodable(of: T.self, completionHandler: completion)
+        .responseDecodable(of: T.self) { (response) in
+            switch response.result {
+            case .success(let model) :
+                completion(.success(model))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
         
     }
 }
