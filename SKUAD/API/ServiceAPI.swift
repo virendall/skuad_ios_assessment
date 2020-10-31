@@ -33,6 +33,9 @@ class ServiceAPI: Requestable {
             case .success(let model) :
                 completion(.success(model))
             case .failure(let error):
+                #if DEBUG
+                print(error.localizedDescription)
+                #endif
                 completion(.failure(error))
             }
         }
